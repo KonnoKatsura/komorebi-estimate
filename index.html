@@ -138,21 +138,21 @@ tr.section-title td{font-weight:800;border-top:3px double #111}
       <p>iPhoneで入力 → その場で見積書プレビュー</p>
     </div>
     <div><div class="badge">端末保存版 β4</div><div class="top-actions">
-<button class="btn soft" id="historyBtn">📚 見積履歴</button><button class="btn ghost" id="settingsBtn">⚙️ 発行者設定</button></div></div>
+<button class="btn soft" id="historyBtn">📚 見積履歴</button></div></div>
   </div>
 
   <section class="panel drawer" id="historyPanel" hidden><h2>📚 見積履歴</h2><div class="section"><p style="color:var(--muted);font-size:12px">この端末内だけに保存されます。</p><div id="historyList"></div><button class="btn ghost" id="closeHistory">閉じる</button></div></section>
-  <section class="panel drawer" id="settingsPanel" hidden><h2>⚙️ 発行者設定</h2><div class="section">
+  <section class="panel drawer" id="settingsPanel"><h2>① 発行者設定</h2><div class="section">
   <div class="row2"><div><label>屋号・会社名</label><input id="issuerCompany"></div><div><label>氏名・代表者名</label><input id="issuerName"></div></div>
   <div style="margin-top:12px"><label>郵便番号・住所</label><input id="issuerAddress"></div>
   <div class="row2" style="margin-top:12px"><div><label>電話番号</label><input id="issuerPhone"></div><div><label>登録番号</label><input id="issuerReg"></div></div>
   <div style="margin-top:12px"><label>デジタル印鑑</label><div class="stamp-preview" id="stampPreview">未登録</div><input id="stampFile" type="file" accept="image/png,image/jpeg,image/webp" style="margin-top:8px"></div>
-  <div class="actions" style="margin-top:12px"><button class="btn primary" id="saveIssuer">設定を保存</button><button class="btn ghost" id="removeStamp">印鑑削除</button><button class="btn ghost" id="closeSettings">閉じる</button></div>
+  <div class="actions" style="margin-top:12px"><button class="btn primary" id="saveIssuer">設定を保存</button><button class="btn ghost" id="removeStamp">印鑑削除</button></div>
   </div><div class="section"><strong>📦 バックアップ</strong><p style="color:var(--muted);font-size:12px">発行者情報・印鑑・編集中データ・見積履歴をJSONで保存／復元します。</p>
   <div class="actions"><button class="btn soft" id="exportBackup">バックアップを書き出す</button><label class="btn ghost">バックアップを復元<input id="importBackup" type="file" accept=".json,application/json" hidden></label></div></div></section>
   <div class="grid">
     <section class="panel editor">
-      <h2>見積内容を入力</h2>
+      <h2>② 見積内容を入力</h2>
 
       <div class="section">
         <div class="row2">
@@ -190,7 +190,7 @@ tr.section-title td{font-weight:800;border-top:3px double #111}
 
       <div class="section">
         <div class="actions">
-          <button class="btn primary" onclick="window.print()">PDFとして保存</button><button class="btn soft" id="saveHistory">📥 履歴に保存</button>
+          <button class="btn primary pdfCreate">📄 PDFを作成</button><button class="btn soft" id="saveHistory">📥 履歴に保存</button>
           <button class="btn ghost" id="resetBtn">デモ内容に戻す</button>
         </div>
       </div>
@@ -198,9 +198,9 @@ tr.section-title td{font-weight:800;border-top:3px double #111}
 
     <section class="panel preview-wrap">
       <div class="preview-toolbar">
-        <strong>見積書プレビュー</strong>
+        <strong>③ 見積書プレビュー</strong>
         <div class="actions">
-          <button class="btn soft" onclick="window.print()">PDF</button>
+          <button class="btn soft pdfCreate">📄 PDF</button>
         </div>
       </div>
       <div class="sheet-shell">
@@ -262,6 +262,8 @@ tr.section-title td{font-weight:800;border-top:3px double #111}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 <script>
 const demoItems = [
   {name:"クロス下地（9mm厚プラスターボード）", qty:"", unit:"", price:""},
@@ -369,8 +371,7 @@ function applyIssuer(o){pIssuerCompany.textContent=o.company||"こもれび内�
 function histories(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]")}catch(e){return[]}}
 function renderHistory(){const h=histories();historyList.innerHTML=h.length?h.map((x,i)=>'<div class="history-entry"><strong>'+((x.data.customer||"宛名なし"))+'</strong><div style="font-size:12px;color:var(--muted);margin:4px 0">'+(x.data.issueDate||"")+'　'+(x.data.project||"")+'</div><div class="actions"><button class="btn soft openHistory" data-hi="'+i+'">開く</button><button class="btn ghost copyHistory" data-hi="'+i+'">複製</button><button class="btn ghost deleteHistory" data-hi="'+i+'">削除</button></div></div>').join(""):'<p>まだ保存された見積はありません。</p>'}
 historyBtn.onclick=()=>{renderHistory();historyPanel.hidden=false;settingsPanel.hidden=true;historyPanel.scrollIntoView({behavior:"smooth"})};
-settingsBtn.onclick=()=>{loadIssuer();settingsPanel.hidden=false;historyPanel.hidden=true;settingsPanel.scrollIntoView({behavior:"smooth"})};
-closeHistory.onclick=()=>historyPanel.hidden=true;closeSettings.onclick=()=>settingsPanel.hidden=true;
+closeHistory.onclick=()=>historyPanel.hidden=true;
 saveIssuer.onclick=()=>{const o=issuerData();localStorage.setItem(ISSUER_KEY,JSON.stringify(o));applyIssuer(o);alert("発行者情報を保存しました")};
 stampFile.onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{stampData=r.result;stampPreview.innerHTML='<img src="'+stampData+'">'};r.readAsDataURL(f)};
 removeStamp.onclick=()=>{stampData="";stampPreview.textContent="未登録"};
@@ -381,6 +382,34 @@ importBackup.onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return
 document.addEventListener("input",e=>{if(e.target.closest(".editor"))setTimeout(saveDraft,0)});
 try{const d=JSON.parse(localStorage.getItem(DRAFT_KEY)||"null");if(d)applyData(d)}catch(e){}
 loadIssuer();
+
+
+async function createPdf(){
+  const buttons=document.querySelectorAll(".pdfCreate");
+  buttons.forEach(b=>{b.disabled=true;b.textContent="PDF作成中…"});
+  try{
+    if(!window.html2canvas || !window.jspdf) throw new Error("PDF library unavailable");
+    const canvas=await html2canvas(document.getElementById("sheet"),{scale:2,backgroundColor:"#ffffff",useCORS:true,logging:false});
+    const img=canvas.toDataURL("image/jpeg",0.96);
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
+    pdf.addImage(img,"JPEG",0,0,210,297,undefined,"FAST");
+    const safe=(customer.value||"見積書").replace(/[\\/:*?"<>|]/g,"_");
+    const filename="見積書_"+safe+"_"+(issueDate.value||new Date().toISOString().slice(0,10))+".pdf";
+    const blob=pdf.output("blob");
+    const file=new File([blob],filename,{type:"application/pdf"});
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:filename});
+    }else{
+      const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+    }
+  }catch(err){
+    if(err && err.name!=="AbortError") alert("PDF作成に失敗しました。通信状態を確認して、もう一度お試しください。");
+  }finally{
+    buttons.forEach((b,i)=>{b.disabled=false;b.textContent=i===0?"📄 PDFを作成":"📄 PDF"});
+  }
+}
+document.querySelectorAll(".pdfCreate").forEach(b=>b.addEventListener("click",createPdf));
 
 renderEditors(); update();
 </script>
