@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f5f3ed">
-<title>こもれび見積 β2</title>
+<title>こもれび見積 β3 端末保存版</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f5f3ed;color:#20231f;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
 header{padding:16px;position:sticky;top:0;background:#f5f3ed;border-bottom:1px solid #ddd;z-index:2}.wrap{max-width:850px;margin:auto;padding:12px}
@@ -19,20 +19,22 @@ table{width:100%;border-collapse:collapse;font-size:12px;margin-top:15px}th,td{b
 @media(max-width:600px){.grid,.row{grid-template-columns:1fr}.paper{padding:13px}}
 @media print{header,nav,.no-print{display:none!important}.wrap{padding:0}.card{border:0;padding:0}.paper{border:0}}
 </style></head><body>
-<header><b>🌿 こもれび見積 β2</b></header><div class="wrap">
-<nav class="no-print"><button id="goEstimate">🧾 見積作成</button><button id="goSettings">⚙️ 発行者設定</button></nav>
+<header><b>🌿 こもれび見積 β3</b></header><div class="wrap">
+<nav class="no-print"><button id="goEstimate">🧾 見積作成</button><button id="goHistory">📚 見積履歴</button><button id="goSettings">⚙️ 設定</button></nav>
 <section id="estimate">
 <div class="card"><h2>見積情報</h2><div class="grid"><div><label>宛名</label><input id="client" placeholder="○○ビル 様"></div><div><label>工事名</label><input id="project"></div></div>
 <label>現場住所</label><input id="site"><div class="grid"><div><label>見積日</label><input id="date" type="date"></div><div><label>有効期限</label><input id="validity" value="発行日より30日以内"></div></div><label>備考</label><textarea id="notes"></textarea></div>
 <div class="card"><h2>明細</h2><div id="items"></div><button id="addItem">＋ 項目を追加</button></div>
 <div class="card"><div class="totals"><span>税抜</span><span id="subtotal">¥0</span><span>消費税（10%）</span><span id="tax">¥0</span><strong>税込合計</strong><strong id="grand">¥0</strong></div>
-<div class="actions"><button class="primary" id="preview">見積書をプレビュー</button><button id="newQuote">新しい見積を作る</button></div><p class="hint">入力内容はこのiPhone内へ自動保存します。</p></div></section>
+<div class="actions"><button class="primary" id="preview">見積書をプレビュー</button><button id="saveQuote">📥 履歴に保存</button><button id="newQuote">新しい見積を作る</button></div><p class="hint">入力内容はこのiPhone内へ自動保存します。</p></div></section>
+<section id="history" class="hidden"><div class="card"><h2>📚 見積履歴</h2><p class="hint">このiPhone内だけに保存されています。クラウドには送信しません。</p><div id="historyList"></div><div class="actions"><button id="historyBack">見積作成へ戻る</button></div></div></section>
 <section id="settings" class="hidden"><div class="card"><h2>⚙️ 発行者設定</h2><p class="hint">初回に登録すれば、以後の見積へ自動反映します。</p>
 <div class="grid"><div><label>屋号・会社名</label><input id="company"></div><div><label>氏名・代表者名</label><input id="name"></div></div>
 <label>郵便番号・住所</label><textarea id="address"></textarea><div class="grid"><div><label>電話番号</label><input id="phone" type="tel"></div><div><label>メール</label><input id="email" type="email"></div></div>
 <label>インボイス登録番号</label><input id="invoice"><label>振込先（必要なら）</label><textarea id="bank"></textarea>
 <h3>🔴 デジタル印鑑</h3><div class="stamp" id="stampBox"><span class="hint">未登録</span></div><label>印鑑画像を選ぶ</label><input id="stampFile" type="file" accept="image/png,image/jpeg,image/webp">
-<p class="hint">透過PNG推奨。登録画像はこの端末内に保存します。</p><div class="actions"><button class="primary" id="saveSettings">設定を保存</button><button class="danger" id="removeStamp">印鑑を削除</button><button id="settingsBack">見積作成へ戻る</button></div><p id="saved" class="hint"></p></div></section>
+<p class="hint">透過PNG推奨。登録画像はこの端末内に保存します。</p><div class="actions"><button class="primary" id="saveSettings">設定を保存</button><button class="danger" id="removeStamp">印鑑を削除</button><button id="settingsBack">見積作成へ戻る</button></div><p id="saved" class="hint"></p>
+<hr style="border:0;border-top:1px solid #ddd;margin:22px 0"><h3>📦 バックアップ</h3><p class="hint">発行者情報・印鑑・編集中の見積・見積履歴を1つのJSONファイルへ書き出します。機種変更やSafariデータ消去に備えて、時々「ファイル」やiCloud Driveへ保存してください。</p><div class="actions"><button id="exportBackup">バックアップを書き出す</button><label style="margin:0"><span class="btn" style="display:inline-block;background:#e5e8e2;border-radius:12px;padding:12px 14px;font-weight:700">バックアップを復元</span><input id="importBackup" type="file" accept="application/json,.json" style="display:none"></label></div></div></section>
 <section id="previewView" class="hidden"><div class="card no-print"><div class="actions"><button id="back">← 入力へ戻る</button><button class="primary" id="print">PDFとして保存／印刷</button></div></div>
 <div class="paper"><h1>御 見 積 書</h1><div class="issuer" id="pIssuer"></div><div style="font-size:18px;font-weight:800;border-bottom:1px solid #333;padding-bottom:5px" id="pClient"></div>
 <p id="pProject"></p><p id="pSite"></p><p id="pDate"></p><p id="pValidity"></p><h3 id="pGrand"></h3>
@@ -40,13 +42,13 @@ table{width:100%;border-collapse:collapse;font-size:12px;margin-top:15px}th,td{b
 </div>
 <script>
 (function(){
-var QKEY="komorebi_q_v2",IKEY="komorebi_i_v2",stamp="";
+var QKEY="komorebi_q_v2",IKEY="komorebi_i_v2",HKEY="komorebi_history_v3",stamp="";
 function el(x){return document.getElementById(x)}function yen(n){return "¥"+Math.round(Number(n)||0).toLocaleString("ja-JP")}
 function esc(s){var d=document.createElement("div");d.textContent=s||"";return d.innerHTML}
 function today(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 var q={client:"",project:"",site:"",date:today(),validity:"発行日より30日以内",notes:"",items:[{desc:"",qty:1,unit:"式",price:0}]};
 try{var old=JSON.parse(localStorage.getItem(QKEY)||"null");if(old&&old.items)q=old}catch(e){}
-function show(id){["estimate","settings","previewView"].forEach(function(x){el(x).classList.add("hidden")});el(id).classList.remove("hidden");window.scrollTo(0,0)}
+function show(id){["estimate","history","settings","previewView"].forEach(function(x){el(x).classList.add("hidden")});el(id).classList.remove("hidden");window.scrollTo(0,0)}
 function render(){["client","project","site","date","validity","notes"].forEach(function(k){el(k).value=q[k]||""});var b=el("items");b.innerHTML="";q.items.forEach(function(x,i){var d=document.createElement("div");d.className="item";d.innerHTML='<b>項目 '+(i+1)+'</b> <button class="danger remove" data-i="'+i+'">削除</button><label>摘要</label><input class="desc" data-i="'+i+'" value="'+esc(x.desc)+'"><div class="row"><div><label>数量</label><input class="qty" data-i="'+i+'" type="number" step="0.01" value="'+x.qty+'"></div><div><label>単位</label><input class="unit" data-i="'+i+'" value="'+esc(x.unit)+'"></div><div><label>単価</label><input class="price" data-i="'+i+'" type="number" value="'+x.price+'"></div></div>';b.appendChild(d)});calc()}
 function sync(){["client","project","site","date","validity","notes"].forEach(function(k){q[k]=el(k).value});document.querySelectorAll(".desc").forEach(function(x){q.items[x.dataset.i].desc=x.value});document.querySelectorAll(".qty").forEach(function(x){q.items[x.dataset.i].qty=Number(x.value)||0});document.querySelectorAll(".unit").forEach(function(x){q.items[x.dataset.i].unit=x.value});document.querySelectorAll(".price").forEach(function(x){q.items[x.dataset.i].price=Number(x.value)||0});localStorage.setItem(QKEY,JSON.stringify(q));calc()}
 function calc(){var s=q.items.reduce(function(a,x){return a+(Number(x.qty)||0)*(Number(x.price)||0)},0),t=Math.floor(s*.1);el("subtotal").textContent=yen(s);el("tax").textContent=yen(t);el("grand").textContent=yen(s+t);return{s:s,t:t,g:s+t}}
@@ -58,6 +60,14 @@ el("items").addEventListener("input",sync);el("items").addEventListener("click",
 ["client","project","site","date","validity","notes"].forEach(function(k){el(k).addEventListener("input",sync)});
 el("addItem").onclick=function(){sync();q.items.push({desc:"",qty:1,unit:"式",price:0});render();sync()};
 el("newQuote").onclick=function(){if(confirm("現在の入力を消して新しい見積を作りますか？")){q={client:"",project:"",site:"",date:today(),validity:"発行日より30日以内",notes:"",items:[{desc:"",qty:1,unit:"式",price:0}]};localStorage.setItem(QKEY,JSON.stringify(q));render()}};
+function historyData(){try{return JSON.parse(localStorage.getItem(HKEY)||"[]")}catch(e){return[]}}
+function saveHistory(){sync();var h=historyData(), copy=JSON.parse(JSON.stringify(q));copy.id=Date.now();copy.savedAt=new Date().toISOString();h.unshift(copy);localStorage.setItem(HKEY,JSON.stringify(h));alert("見積をこのiPhoneの履歴へ保存しました");}
+function renderHistory(){var h=historyData(),box=el("historyList");if(!h.length){box.innerHTML='<p class="hint">まだ保存された見積はありません。</p>';return}box.innerHTML=h.map(function(x,i){var s=(x.items||[]).reduce(function(a,v){return a+(Number(v.qty)||0)*(Number(v.price)||0)},0),g=s+Math.floor(s*.1);return '<div class="item"><b>'+esc(x.client||"宛名なし")+'</b><br><span class="hint">'+esc(x.date||"")+'　'+esc(x.project||"")+'</span><div style="margin:8px 0;font-weight:700">'+yen(g)+'</div><div class="actions"><button class="openHist" data-i="'+i+'">開く・編集</button><button class="copyHist" data-i="'+i+'">複製して新規</button><button class="danger delHist" data-i="'+i+'">削除</button></div></div>'}).join("")}
+el("historyList").onclick=function(e){var i=Number(e.target.dataset.i),h=historyData();if(!Number.isInteger(i)||!h[i])return;if(e.target.classList.contains("delHist")){if(confirm("この見積履歴を削除しますか？")){h.splice(i,1);localStorage.setItem(HKEY,JSON.stringify(h));renderHistory()}}else if(e.target.classList.contains("openHist")){q=JSON.parse(JSON.stringify(h[i]));delete q.id;delete q.savedAt;localStorage.setItem(QKEY,JSON.stringify(q));render();show("estimate")}else if(e.target.classList.contains("copyHist")){q=JSON.parse(JSON.stringify(h[i]));delete q.id;delete q.savedAt;q.date=today();localStorage.setItem(QKEY,JSON.stringify(q));render();show("estimate")}};
+el("saveQuote").onclick=saveHistory;
+el("goHistory").onclick=function(){renderHistory();show("history")};el("historyBack").onclick=function(){show("estimate")};
+el("exportBackup").onclick=function(){sync();var data={version:3,exportedAt:new Date().toISOString(),issuer:(function(){try{return JSON.parse(localStorage.getItem(IKEY)||"{}")}catch(e){return{}}})(),draft:q,history:historyData()};var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="komorebi-estimate-backup-"+today()+".json";document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1000)};
+el("importBackup").onchange=function(e){var f=e.target.files&&e.target.files[0];if(!f)return;if(!confirm("現在の端末内データをバックアップ内容で置き換えます。続けますか？")){e.target.value="";return}var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(!d||!d.draft||!Array.isArray(d.history))throw new Error("invalid");localStorage.setItem(IKEY,JSON.stringify(d.issuer||{}));localStorage.setItem(QKEY,JSON.stringify(d.draft));localStorage.setItem(HKEY,JSON.stringify(d.history));q=d.draft;loadIssuer();render();alert("復元しました");show("estimate")}catch(err){alert("このバックアップファイルは読み込めませんでした。")}e.target.value=""};r.readAsText(f)};
 el("goSettings").onclick=function(){loadIssuer();show("settings")};el("goEstimate").onclick=function(){show("estimate")};el("settingsBack").onclick=function(){show("estimate")};el("back").onclick=function(){show("estimate")};el("preview").onclick=makePreview;el("print").onclick=function(){window.print()};
 el("stampFile").onchange=function(e){var f=e.target.files&&e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){stamp=r.result;stampView()};r.readAsDataURL(f)};
 el("removeStamp").onclick=function(){stamp="";stampView();var o=getIssuer();o.stamp="";localStorage.setItem(IKEY,JSON.stringify(o))};
