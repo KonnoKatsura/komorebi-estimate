@@ -1,1 +1,388 @@
-The requested file reference is not currently visible. Use files.search or files.list to rediscover the file, then retry with a returned ref_id or file_id.
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2f6f62">
+<title>こもれび見積 DEMO</title>
+<style>
+:root{
+  --bg:#f3f6f4; --panel:#fff; --ink:#18201e; --muted:#68736f;
+  --accent:#2f6f62; --accent2:#dfece7; --line:#cfd8d4; --danger:#a64949;
+  --shadow:0 10px 30px rgba(20,40,34,.10);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
+button,input,select{font:inherit}
+body{min-height:100vh}
+.app{max-width:1180px;margin:auto;padding:18px}
+.hero{
+  display:flex;justify-content:space-between;gap:16px;align-items:center;
+  margin-bottom:16px
+}
+.brand h1{font-size:clamp(24px,4vw,38px);margin:0}
+.brand p{margin:6px 0 0;color:var(--muted)}
+.badge{background:#fff3c8;border:1px solid #e4ca69;padding:8px 12px;border-radius:999px;font-weight:700}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,.92fr);gap:18px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+.panel h2{margin:0;padding:16px 18px;border-bottom:1px solid var(--line);font-size:18px}
+.section{padding:16px 18px;border-bottom:1px solid var(--line)}
+.section:last-child{border-bottom:0}
+.row2,.row3{display:grid;gap:12px}
+.row2{grid-template-columns:1fr 1fr}
+.row3{grid-template-columns:1.2fr .7fr .7fr}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:700}
+input,select{
+  width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;color:var(--ink)
+}
+input:focus,select:focus{outline:3px solid rgba(47,111,98,.15);border-color:var(--accent)}
+.items{display:grid;gap:10px}
+.item{
+  display:grid;grid-template-columns:1.7fr .55fr .55fr .8fr auto;gap:8px;align-items:end;
+  background:#f8faf9;border:1px solid var(--line);padding:10px;border-radius:14px
+}
+.item .remove{height:42px;width:42px;border:0;border-radius:10px;background:#f5dddd;color:var(--danger);font-weight:800}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.btn{
+  border:0;border-radius:14px;padding:12px 16px;font-weight:800;cursor:pointer
+}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.soft{background:var(--accent2);color:var(--accent)}
+.btn.ghost{background:#eef1ef;color:#26302d}
+.totals-card{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px
+}
+.metric{background:#f7faf8;border:1px solid var(--line);border-radius:14px;padding:12px}
+.metric small{color:var(--muted);display:block}
+.metric strong{font-size:20px}
+.preview-wrap{position:sticky;top:12px}
+.preview-toolbar{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+.preview-toolbar .actions{gap:8px}
+.sheet-shell{padding:12px;background:#dde4e1}
+.sheet{
+  background:#fff;aspect-ratio:210/297;min-height:660px;padding:24px 26px;box-shadow:0 8px 30px rgba(0,0,0,.14);
+  position:relative;overflow:hidden;font-family:"Yu Gothic","Hiragino Kaku Gothic ProN",sans-serif
+}
+.demo-watermark{
+  position:absolute;inset:42% auto auto 50%;transform:translate(-50%,-50%) rotate(-18deg);
+  font-size:74px;font-weight:900;letter-spacing:.12em;color:rgba(190,40,40,.08);pointer-events:none
+}
+.estimate-head{display:grid;grid-template-columns:1fr 1fr .35fr;align-items:end}
+.estimate-title{font-family:"Yu Mincho",serif;font-size:28px;letter-spacing:.18em;font-weight:700}
+.estimate-date,.estimate-no{font-size:10px;text-align:center}
+.estimate-no{text-align:right}
+.head-info{display:grid;grid-template-columns:55% 45%;gap:18px;margin-top:18px}
+.customer{font-size:20px;text-align:center;border-bottom:1px solid #222;padding-bottom:4px}
+.meta{font-size:10px;margin-top:10px}
+.meta div{display:grid;grid-template-columns:74px 1fr;border-bottom:1px solid #888;padding:4px 0}
+.company{text-align:center;font-size:9px;line-height:1.45;padding-top:3px}
+.company strong{font-size:17px;display:block;margin-top:2px}
+.reg{font-weight:800;margin-top:6px}
+.grand{
+  display:grid;grid-template-columns:110px 1fr 130px;border:1px solid #222;height:46px;margin-top:12px
+}
+.grand>div{display:flex;align-items:center;justify-content:center}
+.grand .label{font-weight:800}
+.grand .value{font-size:22px;font-weight:900;border-left:1px solid #222;border-right:1px solid #222}
+.grand .taxbox{display:grid;grid-template-rows:1fr 1.2fr;font-size:9px}
+.grand .taxbox span:first-child{border-bottom:1px solid #222;width:100%;text-align:center;padding-top:3px}
+table{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:12px;font-size:9px}
+th,td{border:1px solid #222;padding:4px;height:26px;overflow:hidden;white-space:nowrap}
+th{text-align:center}
+td.num{text-align:right}
+tr.project td{background:#ececec;font-weight:800;font-size:11px}
+tr.section-title td{font-weight:800;border-top:3px double #111}
+.summary{display:grid;grid-template-columns:48% 22% 30%;height:48px;border:1px solid #222;border-top:0}
+.summary>div{display:flex;align-items:center;justify-content:center;border-left:1px solid #222}
+.summary>div:first-child{border-left:0;font-weight:800}
+.footer-note{position:absolute;bottom:14px;left:26px;font-size:8px;color:#666}
+.mobile-preview{display:none}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.drawer{margin-bottom:16px}
+.history-entry{background:#f8faf9;border:1px solid var(--line);border-radius:14px;padding:12px;margin:10px 0}
+.stamp-preview{width:88px;height:88px;border:1px dashed var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.stamp-preview img{max-width:100%;max-height:100%;object-fit:contain}
+.company{position:relative}.company .stamp-on-sheet{position:absolute;width:62px;height:62px;object-fit:contain;right:6px;bottom:-8px;opacity:.9}
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr}
+  .preview-wrap{position:static}
+  .sheet{min-height:0}
+}
+@media(max-width:640px){
+  .app{padding:10px}
+  .hero{align-items:flex-start}
+  .badge{font-size:12px}
+  .row2,.row3{grid-template-columns:1fr}
+  .item{grid-template-columns:1fr 1fr}
+  .item .wide{grid-column:1/-1}
+  .item .remove{justify-self:end}
+  .totals-card{grid-template-columns:1fr}
+  .sheet-shell{padding:4px;overflow:auto}
+  .sheet{width:760px;transform-origin:top left;transform:scale(.46);margin-bottom:-355px}
+}
+@media print{
+  body{background:#fff}
+  .app>.hero,.editor,.preview-toolbar{display:none!important}
+  .app,.grid,.panel,.sheet-shell{padding:0;margin:0;max-width:none;border:0;box-shadow:none;background:#fff}
+  .grid{display:block}
+  .preview-wrap{position:static}
+  .sheet{width:210mm;height:297mm;min-height:297mm;box-shadow:none;margin:0;aspect-ratio:auto}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hero">
+    <div class="brand">
+      <h1>こもれび見積 <span style="color:var(--accent)">β4</span></h1>
+      <p>iPhoneで入力 → その場で見積書プレビュー</p>
+    </div>
+    <div><div class="badge">端末保存版 β4</div><div class="top-actions">
+<button class="btn soft" id="historyBtn">📚 見積履歴</button><button class="btn ghost" id="settingsBtn">⚙️ 発行者設定</button></div></div>
+  </div>
+
+  <section class="panel drawer" id="historyPanel" hidden><h2>📚 見積履歴</h2><div class="section"><p style="color:var(--muted);font-size:12px">この端末内だけに保存されます。</p><div id="historyList"></div><button class="btn ghost" id="closeHistory">閉じる</button></div></section>
+  <section class="panel drawer" id="settingsPanel" hidden><h2>⚙️ 発行者設定</h2><div class="section">
+  <div class="row2"><div><label>屋号・会社名</label><input id="issuerCompany"></div><div><label>氏名・代表者名</label><input id="issuerName"></div></div>
+  <div style="margin-top:12px"><label>郵便番号・住所</label><input id="issuerAddress"></div>
+  <div class="row2" style="margin-top:12px"><div><label>電話番号</label><input id="issuerPhone"></div><div><label>登録番号</label><input id="issuerReg"></div></div>
+  <div style="margin-top:12px"><label>デジタル印鑑</label><div class="stamp-preview" id="stampPreview">未登録</div><input id="stampFile" type="file" accept="image/png,image/jpeg,image/webp" style="margin-top:8px"></div>
+  <div class="actions" style="margin-top:12px"><button class="btn primary" id="saveIssuer">設定を保存</button><button class="btn ghost" id="removeStamp">印鑑削除</button><button class="btn ghost" id="closeSettings">閉じる</button></div>
+  </div><div class="section"><strong>📦 バックアップ</strong><p style="color:var(--muted);font-size:12px">発行者情報・印鑑・編集中データ・見積履歴をJSONで保存／復元します。</p>
+  <div class="actions"><button class="btn soft" id="exportBackup">バックアップを書き出す</button><label class="btn ghost">バックアップを復元<input id="importBackup" type="file" accept=".json,application/json" hidden></label></div></div></section>
+  <div class="grid">
+    <section class="panel editor">
+      <h2>見積内容を入力</h2>
+
+      <div class="section">
+        <div class="row2">
+          <div><label>宛名</label><input id="customer" value="○○ビル"></div>
+          <div><label>見積日</label><input id="issueDate" type="date" value="2026-08-02"></div>
+        </div>
+        <div class="row2" style="margin-top:12px">
+          <div><label>現場名</label><input id="project" value="3F 内装工事等"></div>
+          <div><label>工事項目</label><input id="sectionTitle" value="エレベータホール・給湯室"></div>
+        </div>
+        <div style="margin-top:12px"><label>現場住所</label><input id="siteAddress" value="京都市下京区○○町000"></div>
+      </div>
+
+      <div class="section">
+        <div class="actions" style="justify-content:space-between;align-items:center;margin-bottom:10px">
+          <strong>明細</strong>
+          <button class="btn soft" id="addItem">＋ 項目を追加</button>
+        </div>
+        <div id="items" class="items"></div>
+      </div>
+
+      <div class="section">
+        <div class="row3">
+          <div><label>税率</label><select id="taxRate"><option value="10">10%</option><option value="8">8%</option><option value="0">0%</option></select></div>
+          <div><label>受渡期日</label><input id="delivery" value="未定"></div>
+          <div><label>有効期限</label><input id="validity" value="30日"></div>
+        </div>
+
+        <div class="totals-card">
+          <div class="metric"><small>税抜</small><strong id="subtotalCard">¥0</strong></div>
+          <div class="metric"><small>消費税</small><strong id="taxCard">¥0</strong></div>
+          <div class="metric"><small>税込</small><strong id="totalCard">¥0</strong></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="actions">
+          <button class="btn primary" onclick="window.print()">PDFとして保存</button><button class="btn soft" id="saveHistory">📥 履歴に保存</button>
+          <button class="btn ghost" id="resetBtn">デモ内容に戻す</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel preview-wrap">
+      <div class="preview-toolbar">
+        <strong>見積書プレビュー</strong>
+        <div class="actions">
+          <button class="btn soft" onclick="window.print()">PDF</button>
+        </div>
+      </div>
+      <div class="sheet-shell">
+        <div class="sheet" id="sheet">
+          
+
+          <div class="estimate-head">
+            <div class="estimate-title">御 見 積 書</div>
+            <div class="estimate-date" id="pDate">令和8年8月2日</div>
+            <div class="estimate-no">No. 1</div>
+          </div>
+
+          <div class="head-info">
+            <div>
+              <div class="customer"><span id="pCustomer">○○ビル</span>　様</div>
+              <div class="meta">
+                <div><span>受渡期日</span><b id="pDelivery">未定</b></div>
+                <div><span>受渡場所</span><b id="pAddress">京都市下京区○○町000</b></div>
+                <div><span>取引方法</span><b>着工前に取り決め</b></div>
+                <div><span>有効期限</span><b id="pValidity">発行日より30日以内</b></div>
+              </div>
+            </div>
+            <div class="company">
+              <div><span id="pIssuerAddress">〒000-0000　京都市○○区○○町0番地</span></div>
+              <strong id="pIssuerCompany">こもれび内装サービス</strong>
+              <div id="pIssuerName">森川　匠</div>
+              <div id="pIssuerPhone">TEL 000-0000-0000</div>
+              <div class="reg" id="pIssuerReg">登録番号：サンプル表示</div><img id="pStamp" class="stamp-on-sheet" hidden>
+            </div>
+          </div>
+
+          <div class="grand">
+            <div class="label">税込合計金額</div>
+            <div class="value" id="pTotal">¥0-</div>
+            <div class="taxbox"><span>消費税額等</span><span id="pTax">¥0-</span></div>
+          </div>
+
+          <table>
+            <colgroup>
+              <col style="width:5%"><col style="width:45%"><col style="width:9%"><col style="width:7%">
+              <col style="width:12%"><col style="width:15%"><col style="width:7%">
+            </colgroup>
+            <thead>
+              <tr><th>No.</th><th>摘　要</th><th>数量</th><th>単位</th><th>単価</th><th>金額（税抜）</th><th>税率</th></tr>
+            </thead>
+            <tbody id="previewRows"></tbody>
+          </table>
+
+          <div class="summary">
+            <div>合計（税抜）</div>
+            <div><span id="pRate">税率 10%</span></div>
+            <div><strong id="pSubtotal">¥0</strong></div>
+          </div>
+
+          <div class="footer-note">こもれび見積 — 端末保存版</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const demoItems = [
+  {name:"クロス下地（9mm厚プラスターボード）", qty:"", unit:"", price:""},
+  {name:"凹み部分（150mm角）ボード部分取替え　材工共", qty:1, unit:"式", price:6200},
+  {name:"雨もり損傷部分　パテ補修　材工共", qty:1, unit:"式", price:4500},
+  {name:"壁クロス貼りかえ（無地・SPクラス）材工共", qty:1, unit:"式", price:24678},
+  {name:"ソフト巾木貼りかえ　60mm R有　材工共", qty:1, unit:"式", price:8400},
+  {name:"諸費", qty:1, unit:"式", price:3000}
+];
+let items = JSON.parse(JSON.stringify(demoItems));
+
+const yen = n => "¥" + Math.round(n).toLocaleString("ja-JP");
+const era = v => {
+  const d = new Date(v+"T00:00:00");
+  if (Number.isNaN(d.getTime())) return "";
+  return `令和${d.getFullYear()-2018}年${d.getMonth()+1}月${d.getDate()}日`;
+};
+
+function itemEditor(it,i){
+  return `<div class="item">
+    <div class="wide"><label>摘要</label><input data-k="name" data-i="${i}" value="${it.name.replaceAll('"','&quot;')}"></div>
+    <div><label>数量</label><input inputmode="decimal" data-k="qty" data-i="${i}" value="${it.qty}"></div>
+    <div><label>単位</label><input data-k="unit" data-i="${i}" value="${it.unit}"></div>
+    <div><label>単価</label><input inputmode="numeric" data-k="price" data-i="${i}" value="${it.price}"></div>
+    <button class="remove" data-remove="${i}" aria-label="削除">×</button>
+  </div>`;
+}
+function renderEditors(){
+  document.getElementById("items").innerHTML = items.map(itemEditor).join("");
+}
+function update(){
+  const taxRate = Number(document.getElementById("taxRate").value||0);
+  let subtotal=0;
+  const project = document.getElementById("project").value;
+  const sectionTitle = document.getElementById("sectionTitle").value;
+
+  const rows = [];
+  rows.push(`<tr class="project"><td>1</td><td>${project}</td><td></td><td></td><td></td><td></td><td></td></tr>`);
+  rows.push(`<tr class="section-title"><td>2</td><td>〈${sectionTitle}〉</td><td></td><td></td><td></td><td></td><td></td></tr>`);
+
+  items.forEach((it,idx)=>{
+    const qty = Number(it.qty||0);
+    const price = Number(String(it.price||0).replaceAll(",",""));
+    const amount = qty && price ? qty*price : (price||0);
+    subtotal += amount;
+    rows.push(`<tr><td>${idx+3}</td><td>${it.name}</td><td class="num">${it.qty}</td><td>${it.unit}</td><td class="num">${price?price.toLocaleString("ja-JP"):""}</td><td class="num">${amount?amount.toLocaleString("ja-JP"):""}</td><td>${amount?taxRate:""}</td></tr>`);
+  });
+  while(rows.length<18){
+    rows.push(`<tr><td>${rows.length+1}</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`);
+  }
+
+  const tax = Math.floor(subtotal*taxRate/100);
+  const total = subtotal+tax;
+
+  document.getElementById("previewRows").innerHTML=rows.join("");
+  document.getElementById("subtotalCard").textContent=yen(subtotal);
+  document.getElementById("taxCard").textContent=yen(tax);
+  document.getElementById("totalCard").textContent=yen(total);
+  document.getElementById("pSubtotal").textContent=yen(subtotal);
+  document.getElementById("pTax").textContent=yen(tax)+"-";
+  document.getElementById("pTotal").textContent=yen(total)+"-";
+  document.getElementById("pRate").textContent=`税率 ${taxRate}%`;
+  document.getElementById("pCustomer").textContent=document.getElementById("customer").value;
+  document.getElementById("pAddress").textContent=document.getElementById("siteAddress").value;
+  document.getElementById("pDelivery").textContent=document.getElementById("delivery").value;
+  document.getElementById("pValidity").textContent=`発行日より${document.getElementById("validity").value}以内`;
+  document.getElementById("pDate").textContent=era(document.getElementById("issueDate").value);
+}
+
+document.addEventListener("input",e=>{
+  if(e.target.dataset.i!==undefined){
+    const i=Number(e.target.dataset.i);
+    items[i][e.target.dataset.k]=e.target.value;
+  }
+  update();
+});
+document.addEventListener("click",e=>{
+  if(e.target.dataset.remove!==undefined){
+    items.splice(Number(e.target.dataset.remove),1);
+    renderEditors(); update();
+  }
+});
+document.getElementById("addItem").onclick=()=>{
+  items.push({name:"新しい工事項目",qty:1,unit:"式",price:0});
+  renderEditors(); update();
+};
+document.getElementById("resetBtn").onclick=()=>{
+  items=JSON.parse(JSON.stringify(demoItems));
+  document.getElementById("customer").value="○○ビル";
+  document.getElementById("project").value="3F 内装工事等";
+  document.getElementById("sectionTitle").value="エレベータホール・給湯室";
+  document.getElementById("siteAddress").value="京都市下京区○○町000";
+  document.getElementById("taxRate").value="10";
+  renderEditors(); update();
+};
+
+const DRAFT_KEY="komorebi_draft_v4", ISSUER_KEY="komorebi_issuer_v4", HISTORY_KEY="komorebi_history_v4";
+let stampData="";
+function formData(){return {customer:customer.value,issueDate:issueDate.value,project:project.value,sectionTitle:sectionTitle.value,siteAddress:siteAddress.value,taxRate:taxRate.value,delivery:delivery.value,validity:validity.value,items:items}}
+function applyData(d){if(!d)return;customer.value=d.customer||"";issueDate.value=d.issueDate||"";project.value=d.project||"";sectionTitle.value=d.sectionTitle||"";siteAddress.value=d.siteAddress||"";taxRate.value=d.taxRate||"10";delivery.value=d.delivery||"未定";validity.value=d.validity||"30日";items=Array.isArray(d.items)?d.items:[];renderEditors();update()}
+function saveDraft(){try{localStorage.setItem(DRAFT_KEY,JSON.stringify(formData()))}catch(e){}}
+function issuerData(){return {company:issuerCompany.value,name:issuerName.value,address:issuerAddress.value,phone:issuerPhone.value,reg:issuerReg.value,stamp:stampData}}
+function loadIssuer(){let o={};try{o=JSON.parse(localStorage.getItem(ISSUER_KEY)||"{}")}catch(e){};issuerCompany.value=o.company||"";issuerName.value=o.name||"";issuerAddress.value=o.address||"";issuerPhone.value=o.phone||"";issuerReg.value=o.reg||"";stampData=o.stamp||"";stampPreview.innerHTML=stampData?'<img src="'+stampData+'">':"未登録";applyIssuer(o)}
+function applyIssuer(o){pIssuerCompany.textContent=o.company||"こもれび内装サービス";pIssuerName.textContent=o.name||"森川　匠";pIssuerAddress.textContent=o.address||"〒000-0000　京都市○○区○○町0番地";pIssuerPhone.textContent=o.phone?"TEL "+o.phone:"TEL 000-0000-0000";pIssuerReg.textContent=o.reg?"登録番号："+o.reg:"登録番号：サンプル表示";if(o.stamp){pStamp.src=o.stamp;pStamp.hidden=false}else pStamp.hidden=true}
+function histories(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||"[]")}catch(e){return[]}}
+function renderHistory(){const h=histories();historyList.innerHTML=h.length?h.map((x,i)=>'<div class="history-entry"><strong>'+((x.data.customer||"宛名なし"))+'</strong><div style="font-size:12px;color:var(--muted);margin:4px 0">'+(x.data.issueDate||"")+'　'+(x.data.project||"")+'</div><div class="actions"><button class="btn soft openHistory" data-hi="'+i+'">開く</button><button class="btn ghost copyHistory" data-hi="'+i+'">複製</button><button class="btn ghost deleteHistory" data-hi="'+i+'">削除</button></div></div>').join(""):'<p>まだ保存された見積はありません。</p>'}
+historyBtn.onclick=()=>{renderHistory();historyPanel.hidden=false;settingsPanel.hidden=true;historyPanel.scrollIntoView({behavior:"smooth"})};
+settingsBtn.onclick=()=>{loadIssuer();settingsPanel.hidden=false;historyPanel.hidden=true;settingsPanel.scrollIntoView({behavior:"smooth"})};
+closeHistory.onclick=()=>historyPanel.hidden=true;closeSettings.onclick=()=>settingsPanel.hidden=true;
+saveIssuer.onclick=()=>{const o=issuerData();localStorage.setItem(ISSUER_KEY,JSON.stringify(o));applyIssuer(o);alert("発行者情報を保存しました")};
+stampFile.onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{stampData=r.result;stampPreview.innerHTML='<img src="'+stampData+'">'};r.readAsDataURL(f)};
+removeStamp.onclick=()=>{stampData="";stampPreview.textContent="未登録"};
+saveHistory.onclick=()=>{saveDraft();const h=histories();h.unshift({savedAt:new Date().toISOString(),data:formData()});localStorage.setItem(HISTORY_KEY,JSON.stringify(h));alert("この端末の見積履歴へ保存しました")};
+historyList.onclick=e=>{const i=Number(e.target.dataset.hi);if(Number.isNaN(i))return;let h=histories();if(e.target.classList.contains("deleteHistory")){if(confirm("削除しますか？")){h.splice(i,1);localStorage.setItem(HISTORY_KEY,JSON.stringify(h));renderHistory()}}else if(e.target.classList.contains("openHistory")){applyData(h[i].data);historyPanel.hidden=true}else if(e.target.classList.contains("copyHistory")){const d=JSON.parse(JSON.stringify(h[i].data));d.issueDate=new Date().toISOString().slice(0,10);applyData(d);historyPanel.hidden=true}};
+exportBackup.onclick=()=>{saveDraft();const data={version:4,issuer:JSON.parse(localStorage.getItem(ISSUER_KEY)||"{}"),draft:formData(),history:histories()};const b=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="komorebi-backup-"+new Date().toISOString().slice(0,10)+".json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+importBackup.onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);localStorage.setItem(ISSUER_KEY,JSON.stringify(d.issuer||{}));localStorage.setItem(HISTORY_KEY,JSON.stringify(d.history||[]));applyData(d.draft);saveDraft();loadIssuer();alert("復元しました")}catch(err){alert("バックアップを読み込めませんでした")}};r.readAsText(f)};
+document.addEventListener("input",e=>{if(e.target.closest(".editor"))setTimeout(saveDraft,0)});
+try{const d=JSON.parse(localStorage.getItem(DRAFT_KEY)||"null");if(d)applyData(d)}catch(e){}
+loadIssuer();
+
+renderEditors(); update();
+</script>
+</body>
+</html>
